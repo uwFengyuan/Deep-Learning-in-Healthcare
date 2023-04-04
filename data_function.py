@@ -30,23 +30,59 @@ from hparam import hparams as hp
 warnings.filterwarnings(action='ignore', category=FutureWarning)
 
 class MedData(torch.utils.data.Dataset):
-    def __init__(self, image_dir_IOP, label_dir_IOP, train_val_ratio, batch_size, aug_command):
+    def __init__(self, image_dir_IOP, label_dir_IOP,image_dir_Guys, label_dir_Guys, 
+                 image_dir_HH, label_dir_HH, train_val_ratio, batch_size, aug_command):
         self.subjects = []
         self.X_IOP_ex = np.load(image_dir_IOP)
         self.y_IOP_ex = np.load(label_dir_IOP)
+        self.X_Guys_ex = np.load(image_dir_Guys)
+        self.y_Guys_ex = np.load(label_dir_Guys)
+        self.X_HH_ex = np.load(image_dir_HH)
+        self.y_HH_ex = np.load(label_dir_HH)
         self.train_val_ratio = train_val_ratio
         self.batch_size = batch_size
         self.preprocess = None
         self.transform = None
         self.aug_command = aug_command
 
+    def load_data(self, file_name):
+        if file_name == 'IOP':
+            X_train = torch.reshape(torch.tensor(self.X_IOP_ex), (self.X_IOP_ex.shape[0], 1, self.X_IOP_ex.shape[1],
+                                                                  self.X_IOP_ex.shape[2], self.X_IOP_ex.shape[3]))
+            y_train = torch.reshape(torch.tensor(self.y_IOP_ex), (self.y_IOP_ex.shape[0], 1, self.y_IOP_ex.shape[1],
+                                                                  self.y_IOP_ex.shape[2], self.y_IOP_ex.shape[3]))
+        elif file_name == 'Guys':
+            X_train = torch.reshape(torch.tensor(self.X_Guys_ex), (self.X_Guys_ex.shape[0], 1, self.X_Guys_ex.shape[1],
+                                                                   self.X_Guys_ex.shape[2], self.X_Guys_ex.shape[3]))
+            y_train = torch.reshape(torch.tensor(self.y_Guys_ex), (self.y_Guys_ex.shape[0], 1, self.y_Guys_ex.shape[1],
+                                                                   self.y_Guys_ex.shape[2], self.y_Guys_ex.shape[3]))
+        elif file_name == 'HH':
+            X_train = torch.reshape(torch.tensor(self.X_HH_ex), (self.X_HH_ex.shape[0], 1, self.X_HH_ex.shape[1],
+                                                                 self.X_HH_ex.shape[2], self.X_HH_ex.shape[3]))
+            y_train = torch.reshape(torch.tensor(self.y_HH_ex), (self.y_HH_ex.shape[0], 1, self.y_HH_ex.shape[1],
+                                                                 self.y_HH_ex.shape[2], self.y_HH_ex.shape[3]))
+
+        return X_train, y_train
 
     def prepare_data(self):
-        X_train = torch.reshape(torch.tensor(self.X_IOP_ex), (self.X_IOP_ex.shape[0], 1, self.X_IOP_ex.shape[1], \
-                                                            self.X_IOP_ex.shape[2], self.X_IOP_ex.shape[3]))
-        y_train = torch.reshape(torch.tensor(self.y_IOP_ex), (self.y_IOP_ex.shape[0], 1, self.y_IOP_ex.shape[1], \
-                                                            self.y_IOP_ex.shape[2], self.y_IOP_ex.shape[3]))
-        for (image, label) in zip(X_train, y_train):
+        X_train_IOP, y_train_IOP = self.load_data('IOP')
+        for (image, label) in zip(X_train_IOP, y_train_IOP):
+            subject = tio.Subject(
+                image=tio.ScalarImage(tensor=image),
+                label=tio.LabelMap(tensor=label),
+            )
+            self.subjects.append(subject)
+
+        X_train_Guys, y_train_Guys = self.load_data('Guys')
+        for (image, label) in zip(X_train_Guys, y_train_Guys):
+            subject = tio.Subject(
+                image=tio.ScalarImage(tensor=image),
+                label=tio.LabelMap(tensor=label),
+            )
+            self.subjects.append(subject)
+
+        X_train_HH, y_train_HH = self.load_data('HH')
+        for (image, label) in zip(X_train_HH, y_train_HH):
             subject = tio.Subject(
                 image=tio.ScalarImage(tensor=image),
                 label=tio.LabelMap(tensor=label),
@@ -105,7 +141,7 @@ class MedData(torch.utils.data.Dataset):
             ToCanonical(),
             Resample(1), # resample the images to a common resolution
             CropOrPad(self.get_max_shape(self.subjects), padding_mode='reflect'), # Modify the field of view by cropping or padding to match a target shape.
-            #EnsureShapeMultiple(16), #U-Net Ensure that all values in the image shape are divisible by 16
+            EnsureShapeMultiple(16), #U-Net Ensure that all values in the image shape are divisible by 16
             ZNormalization(), # Subtract mean and divide by standard deviation.
             OneHot(hp.out_channel + 1), # one hot encoding
         ])

@@ -38,12 +38,13 @@ def train(net, dataloader, optim, loss_func, loss_func1, epoch):
         pred = net(data) 
         target = target.to(torch.float32)
         if loss_func1 is None:
-            loss = L2RegLoss(loss_func, pred, target, 0.0001,
-                             net)  # loss_func(pred ,target)
+            loss = loss_func(pred ,target)#L2RegLoss(loss_func, pred, target, 0.0001,
+                             #net)  # loss_func(pred ,target)
         else:
-            loss = L2RegLoss(loss_func, pred, target, 0.0001,
-                             net) + L2RegLoss(loss_func1, pred, target, 0.0001,
-                             net) #loss_func(pred, target) + loss_func1(pred, target)
+            loss = loss_func(pred ,target) + loss_func1(pred ,target)
+            #L2RegLoss(loss_func, pred, target, 0.0001,
+                             #net) + L2RegLoss(loss_func1, pred, target, 0.0001,
+                             #net) #loss_func(pred, target) + loss_func1(pred, target)
 
         loss.backward()
         optim.step()

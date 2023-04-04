@@ -13,7 +13,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 def loss():
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    sys.stdout = open('B_loss.log', mode = 'w',encoding='utf-8')
+    #sys.stdout = open('C_loss.log', mode = 'w',encoding='utf-8')
     print("Do the loss")
 
     aug = hp.aug[1]
@@ -28,18 +28,11 @@ def loss():
     print('Resolution Steps: ', steps)
 
     #for file in hp.files:
-    file = 'IOP'
+    file = 'ALL'
     print('File Source: ', file)
     print('Augmentation Type: ', aug_command)
-    if file == 'IOP':
-        dataset = MedData(hp.image_dir_IOP, hp.label_dir_IOP,
-                            hp.IOP_probability, hp.batch_size, aug_command)
-    elif file == 'Guys':
-        dataset = MedData(hp.image_dir_Guys, hp.label_dir_Guys,
-                            hp.IOP_probability, hp.batch_size, aug_command)
-    elif file == 'HH':
-        dataset = MedData(hp.image_dir_HH, hp.label_dir_HH,
-                            hp.IOP_probability, hp.batch_size, aug_command)
+    dataset = MedData(hp.image_dir_IOP, hp.label_dir_IOP, hp.image_dir_Guys, hp.label_dir_Guys,
+                      hp.image_dir_HH, hp.label_dir_HH, hp.IOP_probability, hp.batch_size, aug_command)
     dataset.prepare_data()
     dataset.setup(aug, pre)
     
