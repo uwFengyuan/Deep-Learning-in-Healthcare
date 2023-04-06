@@ -1,0 +1,8 @@
+batch_size:  8
+total_epochs:  35
+debug:  False
+Trainable params:  2207402
+Loss Function is DiceCELoss
+batch_size:  8
+total_epochs:  35
+debug:  False

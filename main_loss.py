@@ -13,7 +13,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 def loss():
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #sys.stdout = open('C_loss.log', mode = 'w',encoding='utf-8')
+    sys.stdout = open('D_loss.log', mode = 'w',encoding='utf-8')
     print("Do the loss")
 
     aug = hp.aug[1]

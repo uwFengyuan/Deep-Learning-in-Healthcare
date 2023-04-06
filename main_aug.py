@@ -13,7 +13,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 def augmentation():
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #sys.stdout = open('C_augmentation.log', mode = 'w',encoding='utf-8')
+    sys.stdout = open('D_augmentation.log', mode = 'w',encoding='utf-8')
     print("Do the augmentation")
 
     aug = hp.aug[1]

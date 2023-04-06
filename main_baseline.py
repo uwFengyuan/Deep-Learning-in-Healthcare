@@ -12,7 +12,7 @@ warnings.filterwarnings(action='ignore', category=FutureWarning)
 def baseline():
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    #sys.stdout = open('C_baseline.log', mode = 'w',encoding='utf-8')
+    sys.stdout = open('D_baseline.log', mode = 'w',encoding='utf-8')
     print("Do the baseline")
 
     for pre in hp.pre:

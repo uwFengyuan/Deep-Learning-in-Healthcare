@@ -50,7 +50,7 @@ def train(net, dataloader, optim, loss_func, loss_func1, epoch):
         optim.step()
         
         total_loss += loss
-        if batch_idx % 4 == 0: #Report stats every x batches
+        if batch_idx % 2 == 0: #Report stats every x batches
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, (batch_idx+1) * len(data), len(dataloader.dataset),
                         100. * (batch_idx+1) / len(dataloader), loss.item()), flush=True)
